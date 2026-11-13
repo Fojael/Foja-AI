@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useChat } from './hooks/useChat';
+import { useMemories } from './hooks/useMemories';
 import { Layout } from './components/Layout/Layout';
 
 export const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<'chat' | 'memory'>('chat');
+
   const {
     conversations,
     activeConversationId,
@@ -17,6 +20,8 @@ export const App: React.FC = () => {
     sendMessage,
     dismissError,
   } = useChat();
+
+  const memoryState = useMemories();
 
   if (isInitialLoading) {
     return (
@@ -36,6 +41,10 @@ export const App: React.FC = () => {
       isLoading={isLoading}
       error={error}
       backendHealthy={backendHealthy}
+      currentView={currentView}
+      pendingSuggestionsCount={memoryState.stats.suggested}
+      memoryState={memoryState}
+      onSelectView={setCurrentView}
       onSelectConversation={selectConversation}
       onNewChat={startNewChat}
       onDeleteConversation={deleteConversation}

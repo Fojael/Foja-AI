@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "esbuild tests/memory.test.ts --bundle --platform=node --format=esm --outfile=tests/.test-bundle.mjs && node --test tests/.test-bundle.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

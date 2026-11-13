@@ -66,6 +66,7 @@ async def generate_chat_response(
     messages: List[Dict[str, str]],
     model: Optional[str] = None,
     system_prompt: Optional[str] = None,
+    format: Optional[str] = None,
 ) -> str:
     """
     Generate an assistant response using Ollama's /api/chat endpoint.
@@ -97,6 +98,8 @@ async def generate_chat_response(
             "num_predict": settings.MAX_PREDICT_TOKENS
         }
     }
+    if format:
+        payload["format"] = format
 
     try:
         async with httpx.AsyncClient(timeout=settings.API_TIMEOUT) as client:
@@ -156,6 +159,7 @@ async def stream_chat_response(
     messages: List[Dict[str, str]],
     model: Optional[str] = None,
     system_prompt: Optional[str] = None,
+    format: Optional[str] = None,
 ) -> AsyncGenerator[str, None]:
     """
     Stream assistant response text chunks from Ollama's /api/chat endpoint with "stream": true.
@@ -185,6 +189,8 @@ async def stream_chat_response(
             "num_predict": settings.MAX_PREDICT_TOKENS
         }
     }
+    if format:
+        payload["format"] = format
 
     try:
         timeout_config = httpx.Timeout(settings.API_TIMEOUT, connect=10.0)

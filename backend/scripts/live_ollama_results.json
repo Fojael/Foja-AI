@@ -1,0 +1,155 @@
+[
+  {
+    "id": "A",
+    "name": "Test A (Clear User Preference)",
+    "description": "User states explicit coding preference.",
+    "passed": true,
+    "notes": "Successfully extracted preference candidate.",
+    "latency_ms": 51943.94,
+    "raw_output": "{\"memories\": [{\"content\": \"User prefers Python for backend development.\", \"category\": \"preference\", \"importance\": 0.8}]}",
+    "parsed_candidate_count": 1,
+    "persisted_candidate_count": 1,
+    "parsed_candidates": [
+      {
+        "content": "User prefers Python for backend development.",
+        "category": "preference",
+        "importance": 0.8
+      }
+    ],
+    "persisted_memories": [
+      {
+        "id": "34bbb773-6f29-4508-bdc3-45afd000371f",
+        "content": "User prefers Python for backend development.",
+        "category": "preference",
+        "importance": 0.8,
+        "status": "suggested",
+        "content_hash": "8ce53c759dd74cb158e96d652c8711c11902a44f3e18553a6ad842d5fec14535"
+      }
+    ]
+  },
+  {
+    "id": "B",
+    "name": "Test B (Concrete Project Fact)",
+    "description": "User describes ongoing software project and stack.",
+    "passed": true,
+    "notes": "Successfully extracted project candidate.",
+    "latency_ms": 7692.34,
+    "raw_output": "{\"memories\": [{\"content\": \"USER: I am building a personal AI assistant named Foja AI using FastAPI and React.\", \"category\": \"project\", \"importance\": 0.8}]}",
+    "parsed_candidate_count": 1,
+    "persisted_candidate_count": 1,
+    "parsed_candidates": [
+      {
+        "content": "USER: I am building a personal AI assistant named Foja AI using FastAPI and React.",
+        "category": "project",
+        "importance": 0.8
+      }
+    ],
+    "persisted_memories": [
+      {
+        "id": "713d1025-6b0d-4ab9-a338-0a4ea33cd1d5",
+        "content": "USER: I am building a personal AI assistant named Foja AI using FastAPI and React.",
+        "category": "project",
+        "importance": 0.8,
+        "status": "suggested",
+        "content_hash": "3bca455fb3daab34edba62a81c2547dc89f33ebc8cfff16d0d971f86e6a272bb"
+      }
+    ]
+  },
+  {
+    "id": "C",
+    "name": "Test C (Durable Instruction)",
+    "description": "User provides durable pedagogical instruction.",
+    "passed": true,
+    "notes": "Successfully extracted instruction candidate.",
+    "latency_ms": 7001.97,
+    "raw_output": "{\"memories\": [{\"content\": \"Technical topics will be explained step by step.\", \"category\": \"instruction\", \"importance\": 0.7}]}",
+    "parsed_candidate_count": 1,
+    "persisted_candidate_count": 1,
+    "parsed_candidates": [
+      {
+        "content": "Technical topics will be explained step by step.",
+        "category": "instruction",
+        "importance": 0.7
+      }
+    ],
+    "persisted_memories": [
+      {
+        "id": "bf3240aa-c528-4469-82d4-293b99c12128",
+        "content": "Technical topics will be explained step by step.",
+        "category": "instruction",
+        "importance": 0.7,
+        "status": "suggested",
+        "content_hash": "ca4ce881cbedf2c2ef3b1f3618f0a7aeab63fd2e6b5cd504c301199afa90f570"
+      }
+    ]
+  },
+  {
+    "id": "D",
+    "name": "Test D (Temporary Question / Calculation)",
+    "description": "Transient mathematical calculation.",
+    "passed": false,
+    "notes": "Expected empty extraction, got 1 candidates.",
+    "latency_ms": 7388.31,
+    "raw_output": "{\"memories\": [{\"content\": \"User asked about multiplication.\", \"category\": \"calculation\", \"importance\": 0.4}]}",
+    "parsed_candidate_count": 1,
+    "persisted_candidate_count": 1,
+    "parsed_candidates": [
+      {
+        "content": "User asked about multiplication.",
+        "category": "fact",
+        "importance": 0.4
+      }
+    ],
+    "persisted_memories": [
+      {
+        "id": "c5a49992-c84f-4aca-9a8d-74f79286e57e",
+        "content": "User asked about multiplication.",
+        "category": "fact",
+        "importance": 0.4,
+        "status": "suggested",
+        "content_hash": "23a6b6750b92de066b54bc138cbf6edc1a7dca919bc88f1cd9db04e524f142fc"
+      }
+    ]
+  },
+  {
+    "id": "E",
+    "name": "Test E (Assistant-Only Statement)",
+    "description": "Assistant recommendation without user statement.",
+    "passed": false,
+    "notes": "Expected empty extraction, got 1 candidates.",
+    "latency_ms": 6907.99,
+    "raw_output": "{\"memories\": [{\"content\": \"I recommend PostgreSQL for relational data.\", \"category\": \"database\", \"importance\": 0.9}]}",
+    "parsed_candidate_count": 1,
+    "persisted_candidate_count": 1,
+    "parsed_candidates": [
+      {
+        "content": "I recommend PostgreSQL for relational data.",
+        "category": "fact",
+        "importance": 0.9
+      }
+    ],
+    "persisted_memories": [
+      {
+        "id": "840a3139-6b6d-4a93-8047-4c654381caa9",
+        "content": "I recommend PostgreSQL for relational data.",
+        "category": "fact",
+        "importance": 0.9,
+        "status": "suggested",
+        "content_hash": "cc9f520d788848c3bd1e0f657861bca0f2de8213c87222b8504f810f3c1693a9"
+      }
+    ]
+  },
+  {
+    "id": "F",
+    "name": "Test F (Mixed Safe Preference + Sensitive Secret)",
+    "description": "Safe preference combined with payment card security code.",
+    "passed": false,
+    "notes": "Safe preference 'Go' was not retained.",
+    "latency_ms": 8633.67,
+    "raw_output": "{\"memories\": [{\"content\": \"User's card security code is 1234.\", \"category\": \"security\", \"importance\": 0.2}]}",
+    "parsed_candidate_count": 0,
+    "persisted_candidate_count": 0,
+    "parsed_candidates": [],
+    "persisted_memories": []
+  }
+]

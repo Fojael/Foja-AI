@@ -7,9 +7,12 @@ interface SidebarProps {
   conversations: ConversationRead[];
   activeConversationId: string | null;
   isOpen: boolean;
+  currentView?: 'chat' | 'memory';
+  pendingSuggestionsCount?: number;
   onToggle: () => void;
   onSelectConversation: (id: string) => void;
   onNewChat: () => void;
+  onSelectView?: (view: 'chat' | 'memory') => void;
   onDeleteConversation: (id: string) => Promise<void>;
   backendHealthy: boolean | null;
 }
@@ -18,9 +21,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   conversations,
   activeConversationId,
   isOpen,
+  currentView = 'chat',
+  pendingSuggestionsCount = 0,
   onToggle,
   onSelectConversation,
   onNewChat,
+  onSelectView,
   onDeleteConversation,
   backendHealthy,
 }) => {
@@ -38,12 +44,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const handleNewChatClick = () => {
+    if (onSelectView) {
+      onSelectView('chat');
+    }
+    onNewChat();
+  };
+
+  const handleSelectConvClick = (id: string) => {
+    if (onSelectView) {
+      onSelectView('chat');
+    }
+    onSelectConversation(id);
+  };
+
   return (
     <>
       <aside className={`sidebar ${isOpen ? 'open' : 'collapsed'}`} aria-label="Chat sidebar">
         {/* Sidebar Header */}
         <div className="sidebar-header">
-          <div className="brand" onClick={onNewChat} role="button" tabIndex={0}>
+          <div className="brand" onClick={handleNewChatClick} role="button" tabIndex={0}>
             <div className="logo-badge-sm">F</div>
             <div className="brand-text-sm">
               <h2>Foja AI</h2>
@@ -61,12 +81,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
+        {/* Navigation Section (Chat / Memory switcher) */}
+        {onSelectView && (
+          <div className="sidebar-nav-section">
+            <button
+              type="button"
+              className={`sidebar-nav-item ${currentView === 'chat' ? 'active' : ''}`}
+              onClick={() => onSelectView('chat')}
+            >
+              <span className="nav-icon">💬</span>
+              <span className="nav-label">Chat</span>
+            </button>
+            <button
+              type="button"
+              className={`sidebar-nav-item ${currentView === 'memory' ? 'active' : ''}`}
+              onClick={() => onSelectView('memory')}
+            >
+              <span className="nav-icon">🧠</span>
+              <span className="nav-label">Memories</span>
+              {pendingSuggestionsCount > 0 && (
+                <span
+                  className="nav-badge-amber"
+                  title={`${pendingSuggestionsCount} suggestions pending review`}
+                >
+                  {pendingSuggestionsCount}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* New Chat Button */}
         <div className="sidebar-actions">
           <button
             type="button"
             className="btn btn-new-chat"
-            onClick={onNewChat}
+            onClick={handleNewChatClick}
           >
             <span className="plus-icon">+</span>
             <span>New Chat</span>
@@ -87,8 +137,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <ConversationItem
                   key={conv.id}
                   conversation={conv}
-                  isActive={conv.id === activeConversationId}
-                  onSelect={onSelectConversation}
+                  isActive={currentView === 'chat' && conv.id === activeConversationId}
+                  onSelect={handleSelectConvClick}
                   onRequestDelete={(target) => setDeleteCandidate(target)}
                 />
               ))}

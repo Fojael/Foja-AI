@@ -7,20 +7,36 @@ from app.api.memory import router as memory_router
 from app.core.config import settings
 from app.core.database import close_db, init_db
 from app.services.ai.ollama import get_ollama_status
+from app.services.memory.extraction import (
+    shutdown_extraction_tasks,
+    startup_extraction_tasks,
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Application lifespan manager.
-    - On startup: ensures data directories and database tables are initialized.
-    - On shutdown: cleans up database connection pools and resources.
+    - On startup: initializes extraction task manager state and database tables.
+    - Guaranteed cleanup: database engine disposal and task draining are always
+      attempted even if startup fails or extraction shutdown raises.
+    - Shutdown order:
+        1. Stop accepting new extraction tasks.
+        2. Wait for active extraction tasks (up to timeout).
+        3. Cancel and await remaining tasks if timed out.
+        4. Dispose database engine.
+    - Original startup and shutdown exceptions are never silently swallowed.
     """
-    # Startup
-    await init_db()
-    yield
-    # Shutdown
-    await close_db()
+    try:
+        startup_extraction_tasks()
+        await init_db()
+        yield
+    finally:
+        # Guaranteed cleanup: ensure database engine is closed even if extraction draining raises
+        try:
+            await shutdown_extraction_tasks()
+        finally:
+            await close_db()
 
 
 app = FastAPI(

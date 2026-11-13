@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timezone
 import json
 import logging
@@ -30,6 +31,10 @@ from app.services.ai.ollama import (
 from app.services.memory.retrieval import (
     format_user_message_with_memories,
     retrieve_relevant_memories,
+)
+from app.services.memory.extraction import (
+    run_memory_extraction_task,
+    schedule_extraction_task,
 )
 
 logger = logging.getLogger("foja.chat")
@@ -159,6 +164,17 @@ async def chat(
     # Update conversation modification time
     conversation.updated_at = datetime.now(timezone.utc)
     await db.commit()
+
+    # 6. Trigger automatic memory extraction in background if enabled
+    if settings.MEMORY_EXTRACTION_ENABLED:
+        try:
+            schedule_extraction_task(
+                conversation_id=conversation.id,
+                owner_id=owner_id,
+                model=target_model,
+            )
+        except Exception as ex:
+            logger.warning("Failed to schedule background extraction task: %s", ex)
 
     return ChatResponse(
         assistant="Foja AI",
@@ -303,6 +319,17 @@ async def chat_stream(
                 conv_obj.updated_at = datetime.now(timezone.utc)
 
             await db.commit()
+
+            # Trigger automatic memory extraction only upon successful stream completion
+            if settings.MEMORY_EXTRACTION_ENABLED:
+                try:
+                    schedule_extraction_task(
+                        conversation_id=conv_id,
+                        owner_id=owner_id,
+                        model=target_model,
+                    )
+                except Exception as ex:
+                    logger.warning("Failed to schedule background extraction task for stream: %s", ex)
 
             # Event 4: done
             done_data = {

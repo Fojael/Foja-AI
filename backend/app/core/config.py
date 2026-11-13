@@ -125,6 +125,41 @@ class Settings(BaseSettings):
             raise ValueError("MEMORY_RETRIEVAL_CANDIDATE_LIMIT must be between 1 and 500.")
         return v
 
+    # Memory Extraction Configuration (Phase 2.4.4 & 2.4.4.2)
+    MEMORY_EXTRACTION_ENABLED: bool = False
+    MEMORY_EXTRACTION_MAX_CANDIDATES: int = 3
+    MEMORY_EXTRACTION_MAX_MESSAGES: int = 10
+    MEMORY_EXTRACTION_MAX_CONTENT_LENGTH: int = 500
+    MEMORY_EXTRACTION_SHUTDOWN_TIMEOUT_SECONDS: float = 5.0
+
+    @field_validator("MEMORY_EXTRACTION_SHUTDOWN_TIMEOUT_SECONDS")
+    @classmethod
+    def validate_shutdown_timeout(cls, v: float) -> float:
+        if v < 0.5 or v > 60.0:
+            raise ValueError("MEMORY_EXTRACTION_SHUTDOWN_TIMEOUT_SECONDS must be between 0.5 and 60.0 seconds.")
+        return v
+
+    @field_validator("MEMORY_EXTRACTION_MAX_CANDIDATES")
+    @classmethod
+    def validate_max_candidates(cls, v: int) -> int:
+        if v < 1 or v > 10:
+            raise ValueError("MEMORY_EXTRACTION_MAX_CANDIDATES must be between 1 and 10.")
+        return v
+
+    @field_validator("MEMORY_EXTRACTION_MAX_MESSAGES")
+    @classmethod
+    def validate_max_messages(cls, v: int) -> int:
+        if v < 2 or v > 50:
+            raise ValueError("MEMORY_EXTRACTION_MAX_MESSAGES must be between 2 and 50.")
+        return v
+
+    @field_validator("MEMORY_EXTRACTION_MAX_CONTENT_LENGTH")
+    @classmethod
+    def validate_max_content_length(cls, v: int) -> int:
+        if v < 50 or v > 2000:
+            raise ValueError("MEMORY_EXTRACTION_MAX_CONTENT_LENGTH must be between 50 and 2000.")
+        return v
+
     model_config = SettingsConfigDict(
         env_file=str(BACKEND_DIR / ".env"),
         env_file_encoding="utf-8",
